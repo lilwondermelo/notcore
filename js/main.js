@@ -1,5 +1,7 @@
 import Game from './Model/Game.js';
-
+const app = window.Telegram.WebApp;
+app.ready()
+app.isVerticalSwipesEnabled = false;
 // Добавляем таблицу на страницу
 let game = new Game(5, 8);
 $('.container').append(game.render());
