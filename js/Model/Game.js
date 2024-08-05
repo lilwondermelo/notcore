@@ -40,6 +40,7 @@ export default class Game {
 
     cancel() {
       Object.entries(this.map).forEach(([key, value]) => value.unselect());
+      $('.energy').html(0);
     }
 
     clear_path() {
