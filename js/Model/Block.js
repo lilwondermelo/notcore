@@ -14,7 +14,6 @@ export default class Block {
     select() {
       this.cell.removeClass('highlighted');
       this.cell.addClass('selected');
-      console.log([parseInt($('.energy').html()), this.mass, parseInt($('.energy').html()) + this.mass])
       let nrj = parseInt($('.energy').html()) + this.mass;
       $('.energy').html(nrj);
     }

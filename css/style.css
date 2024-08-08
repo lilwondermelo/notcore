@@ -45,19 +45,6 @@ table {
     margin: auto;
 }
 
-.block[data-type="A"] {
-    background-image: url("../media/elements/A.jpg");
-}
-.block[data-type="W"] {
-    background-image: url("../media/elements/W.jpg");
-}
-.block[data-type="F"] {
-    background-image: url("../media/elements/F.jpg");
-}
-.block[data-type="E"] {
-    background-image: url("../media/elements/E.jpg");
-}
-
 .energy {
     width: 30vw;
     height: 30vw;
@@ -66,4 +53,5 @@ table {
     text-align: center;
     vertical-align: middle;
     line-height: 30vw;
+    font-size: 5vw;
 }
