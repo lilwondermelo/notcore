@@ -9,11 +9,11 @@ $('.container').append(game.render());
 
 
 $('body').on('mousedown', ".block", function(){
-    game.checkMoves(this);
+    game.checkMoves($(this));
 });
 
 $('body').on('touchstart', ".block", function(){
-    game.checkMoves(this);
+    game.checkMoves($(this));
 });
 
 $('body').on('mouseup', ".block", function(){
@@ -30,7 +30,7 @@ $('body').on("touchcancel", "*", function(){
 
 $('body').on('mousemove', ".block.highlighted", function(){
     game.clear_path();
-    game.checkMoves(this);
+    game.checkMoves($(this));
 });
 
 $('body').on("touchmove", ".block", function(event){
@@ -38,7 +38,7 @@ $('body').on("touchmove", ".block", function(event){
     var elem = document.elementFromPoint(touch.clientX, touch.clientY);
     if ($(elem).hasClass('block') && $(elem).hasClass('highlighted')) {
         game.clear_path();
-        game.checkMoves(elem);
+        game.checkMoves($(elem));
     }
 });
 

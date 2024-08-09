@@ -6,16 +6,15 @@ export default class Block {
       this.name = element.name;
       this.mass = element.mass;
       this.id = '' + x + '' + y;
-      this.cell = $('<td class="block" data-id="' + x + '' + y + '" data-type="' + this.type + '"><img src="./media/elements/' + this.name + '.svg"></td>');
+      this.cell = $('<td class="block" data-id="' + x + '' + y + '" data-x="' + x + '" data-y="' + y + '"  data-type="' + this.type + '"><img src="./media/elements/' + this.name + '.svg"></td>');
     }
     render() {
       return this.cell;
     }
-    select() {
+    select(energy) {
       this.cell.removeClass('highlighted');
       this.cell.addClass('selected');
-      let nrj = parseInt($('.energy').html()) + this.mass;
-      $('.energy').html(nrj);
+      $('.energy').html(energy);
     }
     highlight() {
       if (!this.cell.hasClass("selected")) {

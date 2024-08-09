@@ -2,6 +2,8 @@ import Block from './Block.js';
 
 export default class Game {
   map = {};
+  path = [];
+  moves = {};
   types = [
     {
       "id": 0,
@@ -38,38 +40,61 @@ export default class Game {
     moveBlock(block) {
     }
 
+    get_direction() {
+
+    }
+
     cancel() {
       Object.entries(this.map).forEach(([key, value]) => value.unselect());
       $('.energy').html(0);
+      this.path = [];
     }
 
     clear_path() {
       Object.entries(this.map).forEach(([key, value]) => {
-        
-
         if (value.cell.hasClass("highlighted")) {
           value.unselect();
         }
       });
     }
 
+    get_direction(x, y) {
+      if (x >= 1) {
+        return "right";
+      }
+      else if (x <= -1) {
+        return "left";
+      }
+      else if (y >= 1) {
+        return "down";
+      }
+      else if (y <= -1) {
+        return "up";
+      }
+    }
+
     checkMoves(block) {
-      const type = this.types[$(block).attr("data-type")].type;
-      const mass = this.types[$(block).attr("data-type")].mass;
+      const type = this.types[block.attr("data-type")].type;
+      const mass = this.types[block.attr("data-type")].mass;
       let moves = [];
+      let x = 0;
+      let y = 0;
+      let force = 0;
+
+      if (this.path.length > 0) {
+        x = parseInt(block.attr('data-x') - parseInt(this.path.slice(-1)[0].attr('data-x')));
+        y = parseInt(block.attr('data-y') - parseInt(this.path.slice(-1)[0].attr('data-y')));
+        force = this.moves[this.get_direction(x,y)];
+      }
+      console.log(force);
       if (type == "solid") {
-        moves = this.movesSolid(mass, [0, 0]);
+        moves = this.movesSolid(mass, [x * force, y * force]);
       }
       else if (type == "liquid") {
-        moves = this.movesLiquid(mass, [0, 0]);
+        moves = this.movesLiquid(mass, [x * force, y * force]);
       }
       else if (type == "gas") {
-        moves = {
-          "up": 0,
-          "right": 0,
-          "down": 0,
-          "left": 0
-        }
+        moves = this.moveGas([x * force, y * force]);
       }
       else {
         moves = {
@@ -79,8 +104,16 @@ export default class Game {
           "left": -1
         }
       }
-      let cell = this.map[$(block).attr('data-id')];
-      cell.select();
+      console.log(moves);
+      let cell = this.map[block.attr('data-id')];
+      if (this.path.length > 0) {
+        cell.select(moves[this.get_direction(x, y)]);
+      }
+      else {
+        cell.select(mass);
+      }
+      this.moves = moves;
+      this.path.push(block);
       this.availableMoves(moves, cell);
     }
 
@@ -134,24 +167,24 @@ export default class Game {
         "left": -1
       }
       if (force[0] > 0) {
-        vector["right"] = force[0] + mass/2;
+        vector["right"] = force[0]/2 + mass/2;
         vector["up"] = force[0]/2 - mass;
-        vector["down"] = force[0]/2 + mass;
+        vector["down"] = force[0] + mass;
       }
       else if (force[0] < 0) {
-        vector["left"] = force[0] + mass/2;
-        vector["up"] = force[0]/2 - mass;
-        vector["down"] = force[0]/2 + mass;
+        vector["left"] = -force[0]/2 + mass/2;
+        vector["up"] = -force[0]/2 - mass;
+        vector["down"] = -force[0] + mass;
       }
       else if (force[1] < 0) {
-        vector["left"] = force[1]/2 + mass/2;
-        vector["right"] = force[1]/2 + mass/2;
-        vector["up"] = force[1] - mass;
+        vector["left"] = -force[1]/2 + mass/2;
+        vector["right"] = -force[1]/2 + mass/2;
+        vector["up"] = -force[1] - mass;
       }
       else {
-        vector["left"] = force[1]/2 + mass/2
-        vector["right"] = force[1]/2 + mass/2
-        vector["down"] = force[1] + mass
+        vector["left"] = force[1]/2 + mass/2;
+        vector["right"] = force[1]/2 + mass/2;
+        vector["down"] = force[1] + mass;
       }
       return vector;
     }
@@ -164,29 +197,31 @@ export default class Game {
         "left": -1
       }
 
-      let y = force[1] + mass;
+      let y = force[1];
       let x = force[0];
       if (x > 0) {
         vector['right'] = x;
+        vector['down'] = mass;
       }
       else if (x < 0) {
-        vector['left'] = x;
+        vector['left'] = -x;
+        vector['down'] = mass;
       }
       else if (y < 0) {
-        vector['up'] = y;
+        vector['up'] = -y - mass;
       }
       else {
-        vector['down'] = y;
+        vector['down'] = y + mass;
       }
       return vector;
     }
 
     moveGas(force) {
       let vector = {
-        "up": force[1]/3 + force[0]/3,
-        "right": force[1]/3 + force[0]/3,
-        "down": force[1]/3 + force[0]/3,
-        "left": force[1]/3 + force[0]/3
+        "up": Math.abs(force[1]/3) + Math.abs(force[0]/3),
+        "right": Math.abs(force[1]/3) + Math.abs(force[0]/3),
+        "down": Math.abs(force[1]/3) + Math.abs(force[0]/3),
+        "left": Math.abs(force[1]/3) + Math.abs(force[0]/3)
       }
       return vector;
     }
